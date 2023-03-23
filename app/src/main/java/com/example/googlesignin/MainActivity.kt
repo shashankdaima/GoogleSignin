@@ -35,11 +35,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
     companion object {
         const val CONST_SIGN_IN = 34
+        const val TAG="MainActivity"
     }
 
     lateinit var mDrive: Drive
@@ -74,6 +76,12 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         googleAuth = GoogleSignIn.getClient(this, gso)
+        val pwd=findViewById<Button>(R.id.pwd).also{
+            it.setText(System.getProperty("user.dir"))
+        }
+        pwd.setOnClickListener {
+            createTemporaryFile()
+        }
     }
 
     private fun GoogleSignIN() {
@@ -223,5 +231,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         return name
+    }
+    @Throws(IOException::class)
+    private fun createTemporaryFile(){
+        val prefix = "exampleFile"
+        val suffix = ".txt"
+        val outputDir: File = getCacheDir() // context being the Activity pointer
+        val outputFile = File.createTempFile(prefix, suffix, outputDir)
+        outputFile.writeText("Helloworld SHASHANK")
+        Log.d(TAG, "createTemporaryFile: ${outputFile.absolutePath}")
+//        uploadFileToGDrive(this, outputFile)
     }
 }
